@@ -2,31 +2,26 @@ const express = require('express');
 const router = express.Router();
 const WebsiteModel = require('../model/WebsiteModel');
 const moment = require('moment')
+const checkTokenMiddleware = require('../middlewares/checkTokenMiddleware');
 
 // 新增网站
-router.post('/website', (req, res) => {
+router.post('/website', checkTokenMiddleware, (req, res) => {
+  const { username } = req.userInfo;
   WebsiteModel.create({
     ...req.body,
+    creator: username,
     createTime: moment().format()
   })
   .then(data => {
-    res.json({
-      success: true,
-      msg: "创建成功",
-      data: data,
-    })
+    req.formatData(true, '创建成功', data);
   })
   .catch(err => {
-    res.json({
-      success: false,
-      msg: "创建失败",
-      data: null
-    })
+    req.formatData(false, '创建失败', null);
   })
 })
 
 // 删除接口
-router.delete('/website', (req, res) => {
+router.delete('/website', checkTokenMiddleware, (req, res) => {
   const { id } = req.body;
   WebsiteModel.findOneAndUpdate(
     {
@@ -36,23 +31,16 @@ router.delete('/website', (req, res) => {
       status: 0
     }
   ).then(data => {
-    res.json({
-      success: true,
-      msg: '删除成功',
-      data: data
-    })
+    req.formatData(true, '删除成功', data)
   }).catch(err => {
-    res.json({
-      success: false,
-      msg: '删除失败',
-      data: err
-    })
+    req.formatData(false, '删除失败', err)
   })
 })
 
 // 修改接口
-router.put('/website', (req, res) => {
+router.put('/website', checkTokenMiddleware, (req, res) => {
   const { id, title, url, logo, description, categoryId } = req.body;
+  const { username } = req.userInfo;
   WebsiteModel.findOneAndUpdate(
     // 查询参数
     { 
@@ -65,41 +53,26 @@ router.put('/website', (req, res) => {
       logo, 
       description, 
       categoryId,
+      modifier: username,
       modifyTime: moment().format(),
     }
   ).then(data => {
-    res.json({
-      success: true,
-      msg: '编辑成功',
-      data: data
-    })
+    req.formatData(true, '编辑成功', data)
   }).catch(err => {
-    res.json({
-      success: false,
-      msg: '编辑成功',
-      data: err
-    })
+    req.formatData(false, '编辑失败', err)
   })
 })
 
 // 查询接口
-router.get('/website/list', (req, res) => {
+router.get('/website/list', checkTokenMiddleware, (req, res) => {
   WebsiteModel.find({
     status: 1
   })
   .then(data => {
-    res.json({
-      success: true,
-      msg: '查询成功',
-      data: data
-    })
+    req.formatData(true, '查询成功', data)
   })
   .catch(err => {
-    res.json({
-      success: false,
-      msg: '查询失败',
-      data: err
-    })
+    req.formatData(false, '查询失败', err)
   })
 });
 

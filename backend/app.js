@@ -21,6 +21,19 @@ app.use(express.urlencoded({ extended: false }));
 app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
 
+// 全局中间件
+app.use((req, res, next) => {
+  // 定义全局数据返回格式
+  req.formatData = (success = true, msg = '操作成功', data = null) => {
+    res.json({
+      success,
+      msg,
+      data
+    })
+  }
+  next();
+})
+
 app.use('/', indexRouter);
 app.use('/api', loginRouter);
 app.use('/api', websiteRouter);

@@ -13,18 +13,10 @@ router.post('/register', (req, res) => {
   const { username, password } = req.body;
   UserModel.create({ username, password: md5(password) })
     .then(data => {
-      res.json({
-        success: true,
-        msg: "注册成功",
-        data: data
-      })
+      req.formatData(true, '注册成功', data)
     })
     .catch(err => {
-      res.json({
-        success: false,
-        msg: "注册失败",
-        data: err
-      })
+      req.formatData(false, '注册失败', err)
     })
 })
 
@@ -36,12 +28,8 @@ router.post('/login', (req, res) => {
   UserModel.findOne({ username, password: md5(password) })
     .then(data => {
       //判断 data
-      if(!data){
-        return res.json({
-          success: false,
-          msg: '用户名或密码错误',
-          data: null
-        })
+      if(!data) {
+        return req.formatData(false, '用户名或密码错误');
       }
       
       // 创建当前用户的 token
@@ -53,28 +41,16 @@ router.post('/login', (req, res) => {
       });
       
       //响应 token
-      res.json({
-        success: true,
-        msg: '登陆成功',
-        data: token
-      })
+      req.formatData(true, '登陆成功', token)
     })
     .catch(err => {
-      res.json({
-        success: false,
-        msg: '登陆失败',
-        data: err
-      })
+      req.formatData(false, '登陆失败', err)
     })
 });
 
 //退出登录
 router.post('/logout', (req, res) => {
-  res.json({
-    success: true,
-    msg: "登出成功",
-    data: null
-  });
+  req.formatData(true, '登出成功')
 });
 
 module.exports = router;
