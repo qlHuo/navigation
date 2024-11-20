@@ -4,4 +4,5 @@ module.exports = {
   DBPORT: 27017,
   DBNAME: 'navigation',
   secret: 'navigation_token',
+  expires: 60 * 60 * 24 * 7,
 }

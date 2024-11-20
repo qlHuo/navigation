@@ -1,6 +1,6 @@
 const express = require('express');
 const router = express.Router();
-const WebsiteCategoryModel = require('../model/WebsiteCategory')
+const WebsiteCategoryModel = require('../models/WebsiteCategory')
 const moment = require('moment');
 const checkTokenMiddleware = require('../middlewares/checkTokenMiddleware');
 

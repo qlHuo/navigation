@@ -5,9 +5,10 @@ const cookieParser = require('cookie-parser');
 const logger = require('morgan');
 
 const indexRouter = require('./routes/index');
-const loginRouter = require('./routes/login');
-const websiteRouter = require('./routes/website');
-const websiteCategoryRouter = require('./routes/websiteCategory');
+const websiteOldRouter = require('./routes/website');
+const websiteCategoryOldRouter = require('./routes/websiteCategory');
+const { UserRouter, WebsiteRouter, WebsiteCategoryRouter } = require('./routes/admin');
+const globalFormatDataMiddleware = require('./middlewares/globalFormatDataMiddleware');
 
 const app = express();
 
@@ -22,22 +23,14 @@ app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
 
 // 全局中间件
-app.use((req, res, next) => {
-  // 定义全局数据返回格式
-  req.formatData = (success = true, msg = '操作成功', data = null) => {
-    res.json({
-      success,
-      msg,
-      data
-    })
-  }
-  next();
-})
+app.use(globalFormatDataMiddleware);
 
 app.use('/', indexRouter);
-app.use('/api', loginRouter);
-app.use('/api', websiteRouter);
-app.use('/api', websiteCategoryRouter);
+app.use('/api', websiteOldRouter);
+app.use('/api', websiteCategoryOldRouter);
+app.use('/api', UserRouter);
+app.use('/api', WebsiteRouter);
+app.use('/api', WebsiteCategoryRouter)
 
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {

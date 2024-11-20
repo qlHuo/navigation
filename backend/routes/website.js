@@ -1,6 +1,6 @@
 const express = require('express');
 const router = express.Router();
-const WebsiteModel = require('../model/WebsiteModel');
+const WebsiteModel = require('../models/WebsiteModel');
 const moment = require('moment')
 const checkTokenMiddleware = require('../middlewares/checkTokenMiddleware');
 
